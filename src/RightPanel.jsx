@@ -1,9 +1,14 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Check,
   X,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
   Square,
   Layers,
   Download,
@@ -25,16 +30,42 @@ export default function RightPanel({
   });
   const [showPatches, setShowPatches] = useState(false);
   const [patchesCreated, setPatchesCreated] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
   const [expandPreview, setExpandPreview] = useState(true);
   const [expandMasks, setExpandMasks] = useState(true);
   const [expandPatchView, setExpandPatchView] = useState(true);
   const [expandExportOptions, setExpandExportOptions] = useState(true);
+
+  const [maskIndex, setMaskIndex] = useState(0);
+  const [patchIndex, setPatchIndex] = useState(0);
+  const [maskZoom, setMaskZoom] = useState(1);
+  const [patchZoom, setPatchZoom] = useState(1);
+  const [fullscreenMode, setFullscreenMode] = useState(null);
+  const [fullscreenIndex, setFullscreenIndex] = useState(0);
+  const [fullscreenZoom, setFullscreenZoom] = useState(1);
 
   const [maskExport, setMaskExport] = useState(false);
   const [jsonCollective, setJsonCollective] = useState(true);
   const [jsonIndividual, setJsonIndividual] = useState(false);
   const [yoloExport, setYoloExport] = useState(false);
   const [pascalExport, setPascalExport] = useState(false);
+  const [ratingById, setRatingById] = useState({});
+
+  const handleRatingChange = (id, value) => {
+    setRatingById((prev) => ({
+      ...prev,
+      [id]: prev[id] === value ? null : value,
+    }));
+  };
+
+  useEffect(() => {
+    if (!showExportModal) return;
+    const initialRatings = detections.reduce((acc, det) => {
+      acc[det.id] = acc[det.id] ?? null;
+      return acc;
+    }, {});
+    setRatingById((prev) => ({ ...initialRatings, ...prev }));
+  }, [showExportModal, detections]);
 
   const selected = useMemo(
     () => detections.find((det) => det.id === selectedId),
@@ -43,6 +74,107 @@ export default function RightPanel({
 
   const pending = detections.filter((det) => det.status !== "confirmed");
   const confirmed = detections.filter((det) => det.class_name !== "Defect");
+
+  const clampZoom = (value) => Math.min(3, Math.max(0.5, value));
+
+  const clampIndex = (current, delta, length) => {
+    if (!length) return 0;
+    const next = current + delta;
+    if (next < 0) return 0;
+    if (next >= length) return length - 1;
+    return next;
+  };
+
+  const maskCount = detections.length;
+  const patchCount = detections.length;
+  const maskItem = detections[maskIndex];
+  const patchItem = detections[patchIndex];
+
+  const fullscreenCount = fullscreenMode === "mask" ? maskCount : patchCount;
+  const fullscreenItem = fullscreenMode === "mask" ? maskItem : patchItem;
+
+  // Keep indexes within bounds when detections change
+  useEffect(() => {
+    if (maskIndex >= maskCount) setMaskIndex(0);
+    if (patchIndex >= patchCount) setPatchIndex(0);
+    if (fullscreenIndex >= fullscreenCount) setFullscreenIndex(0);
+  }, [
+    maskCount,
+    patchCount,
+    fullscreenCount,
+    maskIndex,
+    patchIndex,
+    fullscreenIndex,
+  ]);
+
+  const openFullscreen = (mode, index, zoom) => {
+    setFullscreenMode(mode);
+    setFullscreenIndex(index);
+    setFullscreenZoom(zoom);
+  };
+
+  const closeFullscreen = () => {
+    if (fullscreenMode === "mask") {
+      setMaskIndex(fullscreenIndex);
+      setMaskZoom(fullscreenZoom);
+    }
+    if (fullscreenMode === "patch") {
+      setPatchIndex(fullscreenIndex);
+      setPatchZoom(fullscreenZoom);
+    }
+
+    setFullscreenMode(null);
+  };
+
+  const changeFullscreenIndex = (delta) => {
+    setFullscreenIndex((prev) => {
+      const next = clampIndex(prev, delta, fullscreenCount);
+      if (fullscreenMode === "mask") setMaskIndex(next);
+      if (fullscreenMode === "patch") setPatchIndex(next);
+      return next;
+    });
+  };
+
+  const changeFullscreenZoom = (delta) => {
+    setFullscreenZoom((prev) => {
+      const next = clampZoom(prev + delta);
+      if (fullscreenMode === "mask") setMaskZoom(next);
+      if (fullscreenMode === "patch") setPatchZoom(next);
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (!fullscreenMode) return;
+
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closeFullscreen();
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        changeFullscreenIndex(-1);
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        changeFullscreenIndex(1);
+        return;
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [fullscreenMode]);
+
+  useEffect(() => {
+    if (!fullscreenMode) return;
+    if (fullscreenMode === "mask") {
+      setFullscreenIndex(maskIndex);
+    }
+    if (fullscreenMode === "patch") {
+      setFullscreenIndex(patchIndex);
+    }
+  }, [fullscreenMode, maskIndex, patchIndex]);
 
   return (
     <aside className="right-panel">
@@ -344,36 +476,196 @@ export default function RightPanel({
               </div>
 
               <div className="right-panel-section">
-                <button
-                  type="button"
-                  className="collapse-toggle"
-                  onClick={() => setExpandMasks((prev) => !prev)}
-                >
-                  <span>Masks</span>
-                  {expandMasks ? (
-                    <ChevronUp size={16} />
-                  ) : (
-                    <ChevronDown size={16} />
-                  )}
-                </button>
-                {expandMasks && <div className="preview-box">Mask preview</div>}
+                <div className="section-header-with-controls">
+                  <button
+                    type="button"
+                    className="collapse-toggle"
+                    onClick={() => setExpandMasks((prev) => !prev)}
+                  >
+                    <span>Masks</span>
+                    {expandMasks ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    )}
+                  </button>
+                  <div className="preview-header-actions">
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      disabled={!maskCount}
+                      onClick={() =>
+                        setMaskIndex((prev) => clampIndex(prev, -1, maskCount))
+                      }
+                      title="Previous mask"
+                    >
+                      <ChevronLeft size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      disabled={!maskCount}
+                      onClick={() =>
+                        setMaskIndex((prev) => clampIndex(prev, 1, maskCount))
+                      }
+                      title="Next mask"
+                    >
+                      <ChevronRight size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      disabled={!maskCount}
+                      onClick={() =>
+                        setMaskZoom((prev) => clampZoom(prev - 0.1))
+                      }
+                      title="Zoom out"
+                    >
+                      <ZoomOut size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      disabled={!maskCount}
+                      onClick={() =>
+                        setMaskZoom((prev) => clampZoom(prev + 0.1))
+                      }
+                      title="Zoom in"
+                    >
+                      <ZoomIn size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      disabled={!maskCount}
+                      onClick={() =>
+                        openFullscreen("mask", maskIndex, maskZoom)
+                      }
+                      title="Fullscreen"
+                    >
+                      <Maximize2 size={14} />
+                    </button>
+                  </div>
+                </div>
+                {expandMasks && (
+                  <div className="preview-box">
+                    <div
+                      className="preview-content"
+                      style={{ transform: `scale(${maskZoom})` }}
+                    >
+                      {maskItem ? (
+                        <div className="preview-image">
+                          <div className="preview-image-label">
+                            {maskItem.class_name} •{" "}
+                            {Math.round((maskItem.confidence ?? 0) * 100)}%
+                          </div>
+                          <div className="preview-image-placeholder">
+                            {maskItem.class_name} preview
+                          </div>
+                        </div>
+                      ) : (
+                        "No masks available"
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="right-panel-section">
-                <button
-                  type="button"
-                  className="collapse-toggle"
-                  onClick={() => setExpandPatchView((prev) => !prev)}
-                >
-                  <span>Patch View</span>
-                  {expandPatchView ? (
-                    <ChevronUp size={16} />
-                  ) : (
-                    <ChevronDown size={16} />
-                  )}
-                </button>
+                <div className="section-header-with-controls">
+                  <button
+                    type="button"
+                    className="collapse-toggle"
+                    onClick={() => setExpandPatchView((prev) => !prev)}
+                  >
+                    <span>Patch View</span>
+                    {expandPatchView ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    )}
+                  </button>
+                  <div className="preview-header-actions">
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      disabled={!patchCount}
+                      onClick={() =>
+                        setPatchIndex((prev) =>
+                          clampIndex(prev, -1, patchCount),
+                        )
+                      }
+                      title="Previous patch"
+                    >
+                      <ChevronLeft size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      disabled={!patchCount}
+                      onClick={() =>
+                        setPatchIndex((prev) => clampIndex(prev, 1, patchCount))
+                      }
+                      title="Next patch"
+                    >
+                      <ChevronRight size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      disabled={!patchCount}
+                      onClick={() =>
+                        setPatchZoom((prev) => clampZoom(prev - 0.1))
+                      }
+                      title="Zoom out"
+                    >
+                      <ZoomOut size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      disabled={!patchCount}
+                      onClick={() =>
+                        setPatchZoom((prev) => clampZoom(prev + 0.1))
+                      }
+                      title="Zoom in"
+                    >
+                      <ZoomIn size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      disabled={!patchCount}
+                      onClick={() =>
+                        openFullscreen("patch", patchIndex, patchZoom)
+                      }
+                      title="Fullscreen"
+                    >
+                      <Maximize2 size={14} />
+                    </button>
+                  </div>
+                </div>
                 {expandPatchView && (
-                  <div className="preview-box">Patch view</div>
+                  <div className="preview-box">
+                    <div
+                      className="preview-content"
+                      style={{ transform: `scale(${patchZoom})` }}
+                    >
+                      {patchItem ? (
+                        <div className="preview-image">
+                          <div className="preview-image-label">
+                            {patchItem.class_name} •{" "}
+                            {Math.round((patchItem.confidence ?? 0) * 100)}%
+                          </div>
+                          <div className="preview-image-placeholder">
+                            {patchItem.class_name} preview
+                          </div>
+                        </div>
+                      ) : (
+                        "No patches available"
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
 
@@ -443,13 +735,201 @@ export default function RightPanel({
                   <Download size={14} style={{ marginRight: 6 }} />
                   Export All Patches
                 </button>
-                <button type="button" className="secondary-btn">
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={() => setShowExportModal(true)}
+                >
                   <Layers size={14} style={{ marginRight: 6 }} />
                   Export Selected Patches
                 </button>
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {showExportModal && (
+        <div
+          className="export-modal-overlay"
+          onClick={() => setShowExportModal(false)}
+        >
+          <div
+            className="export-modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="export-modal-header">
+              <h3>Export Selected Patches</h3>
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={() => setShowExportModal(false)}
+                title="Close"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="export-modal-body">
+              <p className="export-modal-subtitle">
+                Choose ratings for selected annotations
+              </p>
+              <div className="export-modal-list">
+                {detections.length > 0 ? (
+                  detections.map((det) => (
+                    <div key={det.id} className="export-modal-item">
+                      <div className="export-modal-item-main">
+                        <span className="checkbox-text">
+                          {det.class_name} (
+                          {Math.round((det.confidence ?? 0) * 100)}%)
+                        </span>
+                        <div className="rating-options">
+                          {[0, 1, 2].map((value) => {
+                            const isSelected = ratingById[det.id] === value;
+                            return (
+                              <button
+                                key={value}
+                                type="button"
+                                className={`rating-box ${isSelected ? "selected" : ""}`}
+                                onClick={() =>
+                                  handleRatingChange(det.id, value)
+                                }
+                                title={`Select rating ${value}`}
+                                aria-label={`Rating ${value}`}
+                              >
+                                {value}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="right-panel-empty">
+                    No annotations available
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="export-modal-actions">
+              <button
+                type="button"
+                className="secondary-btn"
+                onClick={() => setShowExportModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="primary-btn"
+                onClick={() => {
+                  setShowExportModal(false);
+                }}
+              >
+                Export
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {fullscreenMode && (
+        <div className="fullscreen-overlay" onClick={closeFullscreen}>
+          <div className="fullscreen-card" onClick={(e) => e.stopPropagation()}>
+            <div className="fullscreen-header">
+              <span className="fullscreen-title">
+                {fullscreenMode === "mask" ? "Mask" : "Patch"} Preview
+                {fullscreenCount
+                  ? ` (${fullscreenIndex + 1}/${fullscreenCount})`
+                  : ""}
+              </span>
+              <div className="fullscreen-actions">
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={() => changeFullscreenIndex(-1)}
+                  disabled={!fullscreenCount}
+                  title="Previous"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={() => changeFullscreenIndex(1)}
+                  disabled={!fullscreenCount}
+                  title="Next"
+                >
+                  <ChevronRight size={16} />
+                </button>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={() => changeFullscreenZoom(-0.1)}
+                  disabled={!fullscreenCount}
+                  title="Zoom out"
+                >
+                  <ZoomOut size={16} />
+                </button>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={() => changeFullscreenZoom(0.1)}
+                  disabled={!fullscreenCount}
+                  title="Zoom in"
+                >
+                  <ZoomIn size={16} />
+                </button>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={closeFullscreen}
+                  title="Close"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+            <div
+              className="fullscreen-body"
+              style={{ transform: `scale(${fullscreenZoom})` }}
+            >
+              <button
+                type="button"
+                className="fullscreen-nav-btn fullscreen-nav-btn--left"
+                onClick={() => changeFullscreenIndex(-1)}
+                disabled={!fullscreenCount || fullscreenIndex === 0}
+                title="Previous"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                type="button"
+                className="fullscreen-nav-btn fullscreen-nav-btn--right"
+                onClick={() => changeFullscreenIndex(1)}
+                disabled={
+                  !fullscreenCount || fullscreenIndex === fullscreenCount - 1
+                }
+                title="Next"
+              >
+                <ChevronRight size={20} />
+              </button>
+
+              {fullscreenItem ? (
+                <div className="preview-image">
+                  <div className="preview-image-label">
+                    {fullscreenItem.class_name} •{" "}
+                    {Math.round((fullscreenItem.confidence ?? 0) * 100)}%
+                  </div>
+                  <div className="preview-image-placeholder">
+                    {fullscreenItem.class_name} preview
+                  </div>
+                </div>
+              ) : (
+                "Nothing to show"
+              )}
+            </div>
+          </div>
         </div>
       )}
     </aside>

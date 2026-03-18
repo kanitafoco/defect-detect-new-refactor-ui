@@ -39,6 +39,11 @@ function AnnotationScreen({
     surface: "Surface",
     classCorrect: "Class Correct",
     classLeather: "Leather",
+    patchWidth: "200",
+    patchHeight: "200",
+    patchHorizontalStride: "50",
+    patchVerticalStride: "50",
+    ratingTolerance: "95",
   });
   const defaultSettingsValues = {
     marker1: "Defect 1",
@@ -51,6 +56,11 @@ function AnnotationScreen({
     surface: "Surface",
     classCorrect: "Class Correct",
     classLeather: "Leather",
+    patchWidth: "200",
+    patchHeight: "200",
+    patchHorizontalStride: "50",
+    patchVerticalStride: "50",
+    ratingTolerance: "95",
   };
 
   useEffect(() => {
@@ -241,16 +251,171 @@ function AnnotationScreen({
             </div>
 
             <div className="settings-modal-content">
-              {Object.entries(settingsValues).map(([key, value]) => (
-                <div key={key} className="settings-field">
-                  <label>{key}</label>
+              <div className="settings-section">
+                <h3>Names</h3>
+                <div className="settings-field">
+                  <label>Marker 1</label>
                   <input
                     type="text"
-                    value={value}
-                    onChange={(e) => updateSetting(key, e.target.value)}
+                    value={settingsValues.marker1}
+                    onChange={(e) => updateSetting("marker1", e.target.value)}
                   />
                 </div>
-              ))}
+                <div className="settings-field">
+                  <label>Marker 2</label>
+                  <input
+                    type="text"
+                    value={settingsValues.marker2}
+                    onChange={(e) => updateSetting("marker2", e.target.value)}
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>Marker 3</label>
+                  <input
+                    type="text"
+                    value={settingsValues.marker3}
+                    onChange={(e) => updateSetting("marker3", e.target.value)}
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>Marker 4</label>
+                  <input
+                    type="text"
+                    value={settingsValues.marker4}
+                    onChange={(e) => updateSetting("marker4", e.target.value)}
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>Marker 5</label>
+                  <input
+                    type="text"
+                    value={settingsValues.marker5}
+                    onChange={(e) => updateSetting("marker5", e.target.value)}
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>Eraser</label>
+                  <input
+                    type="text"
+                    value={settingsValues.eraser}
+                    onChange={(e) => updateSetting("eraser", e.target.value)}
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>Edge</label>
+                  <input
+                    type="text"
+                    value={settingsValues.edge}
+                    onChange={(e) => updateSetting("edge", e.target.value)}
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>Surface</label>
+                  <input
+                    type="text"
+                    value={settingsValues.surface}
+                    onChange={(e) => updateSetting("surface", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="settings-section">
+                <h3>Class settings</h3>
+                <div className="settings-field">
+                  <label>Class Correct name</label>
+                  <input
+                    type="text"
+                    value={settingsValues.classCorrect}
+                    onChange={(e) =>
+                      updateSetting("classCorrect", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>Class Leather name</label>
+                  <input
+                    type="text"
+                    value={settingsValues.classLeather}
+                    onChange={(e) =>
+                      updateSetting("classLeather", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="settings-section">
+                <h3>Patches</h3>
+                <p className="settings-description">
+                  Default patch dimensions and stride values
+                </p>
+                <div className="settings-field">
+                  <label>Width</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={settingsValues.patchWidth}
+                    onChange={(e) =>
+                      updateSetting("patchWidth", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>Height</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={settingsValues.patchHeight}
+                    onChange={(e) =>
+                      updateSetting("patchHeight", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>Horizontal stride</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={settingsValues.patchHorizontalStride}
+                    onChange={(e) =>
+                      updateSetting("patchHorizontalStride", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>Vertical stride</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={settingsValues.patchVerticalStride}
+                    onChange={(e) =>
+                      updateSetting("patchVerticalStride", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="settings-section">
+                <h3>Rating Tolerance</h3>
+                <p className="settings-description">
+                  Configure the tolerance for assigning rating 1 to a patch.
+                  This tolerance represents the percentage of the patch covered
+                  by the annotation in relation to its surface. It also limits
+                  the minimum presence of the annotation for assigning a rating
+                  of 1.
+                </p>
+                <div className="settings-field">
+                  <label>Choose ratio (1–100)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={settingsValues.ratingTolerance}
+                    onChange={(e) =>
+                      updateSetting("ratingTolerance", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="settings-modal-actions">
