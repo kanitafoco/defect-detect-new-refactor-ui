@@ -35,6 +35,7 @@ export default function RightPanel({
   const [expandMasks, setExpandMasks] = useState(true);
   const [expandPatchView, setExpandPatchView] = useState(true);
   const [expandExportOptions, setExpandExportOptions] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const [maskIndex, setMaskIndex] = useState(0);
   const [patchIndex, setPatchIndex] = useState(0);
@@ -177,7 +178,7 @@ export default function RightPanel({
   }, [fullscreenMode, maskIndex, patchIndex]);
 
   return (
-    <aside className="right-panel">
+    <aside className={`right-panel ${isCollapsed ? "collapsed" : ""}`}>
       <div className="tab-bar">
         <button
           type="button"
@@ -195,6 +196,14 @@ export default function RightPanel({
           }}
         >
           Export & Patches
+        </button>
+        <button
+          type="button"
+          className={`tab-arrow-btn ${isCollapsed ? "collapsed" : ""}`}
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          onClick={() => setIsCollapsed((prev) => !prev)}
+        >
+          <ChevronRight size={14} />
         </button>
       </div>
 

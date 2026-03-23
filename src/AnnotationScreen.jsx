@@ -229,12 +229,6 @@ function AnnotationScreen({
           <span>{annotationsCount} annotations</span>
           <span>{confirmedCount} confirmed</span>
         </div>
-        <div className="status-right">
-          <span>
-            {imageWidth} x {imageHeight} px
-          </span>
-          <span>{zoom}%</span>
-        </div>
       </div>
 
       {settingsOpen && (

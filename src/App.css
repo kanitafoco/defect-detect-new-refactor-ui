@@ -296,7 +296,6 @@ body {
   height: 10px;
 }
 
-
 .top-toolbar-icon:hover {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.25);
@@ -404,10 +403,6 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16);
 }
 
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
 .top-toolbar-action--primary {
   background: linear-gradient(
     90deg,
@@ -445,13 +440,238 @@ body {
 }
 
 .annotation-screen.theme-light {
-  background: #f4f4f6;
+  --light-orange-base: #fff7ed;
+  --light-orange-panel: #ffedd5;
+  --light-orange-elevated: #fdeccf;
+  --light-border: rgba(120, 83, 38, 0.22);
+  --light-text-primary: #111827;
+  --light-text-secondary: #374151;
+  background: var(--light-orange-base) !important;
+  color: var(--light-text-primary) !important;
+}
+
+body.light,
+body:has(.annotation-screen.theme-light),
+#root:has(.annotation-screen.theme-light),
+.app:has(.annotation-screen.theme-light) {
+  background: #fff7ed !important;
+  color: #111827 !important;
+}
+
+.annotation-screen.theme-light,
+.annotation-screen.theme-light .workspace,
+.annotation-screen.theme-light .workspace-main,
+.annotation-screen.theme-light .image-canvas,
+.annotation-screen.theme-light .workspace-empty {
+  background: var(--light-orange-base) !important;
+}
+
+.annotation-screen.theme-light .top-toolbar,
+.annotation-screen.theme-light .sidebar,
+.annotation-screen.theme-light .tools-panel,
+.annotation-screen.theme-light .right-panel,
+.annotation-screen.theme-light .bottom-status-bar,
+.annotation-screen.theme-light .right-panel-section,
+.annotation-screen.theme-light .tab-item,
+.annotation-screen.theme-light .tab-arrow-btn,
+.annotation-screen.theme-light .collapse-toggle,
+.annotation-screen.theme-light .right-panel-item,
+.annotation-screen.theme-light .right-panel-item.confirmed,
+.annotation-screen.theme-light .preview-box,
+.annotation-screen.theme-light .export-options,
+.annotation-screen.theme-light .file-input-label {
+  background: var(--light-orange-panel) !important;
+}
+
+.annotation-screen.theme-light .top-toolbar,
+.annotation-screen.theme-light input,
+.annotation-screen.theme-light select,
+.annotation-screen.theme-light textarea,
+.annotation-screen.theme-light .preview-actions button,
+.annotation-screen.theme-light .export-options label,
+.annotation-screen.theme-light .export-options input[type="checkbox"] {
+  background-color: var(--light-orange-elevated) !important;
+  color: var(--light-text-primary) !important;
+  border-color: var(--light-border) !important;
+}
+
+.annotation-screen.theme-light,
+.annotation-screen.theme-light .top-toolbar *,
+.annotation-screen.theme-light .sidebar *,
+.annotation-screen.theme-light .tools-panel *,
+.annotation-screen.theme-light .right-panel *,
+.annotation-screen.theme-light .workspace-empty,
+.annotation-screen.theme-light .tab-item,
+.annotation-screen.theme-light .tab-arrow-btn,
+.annotation-screen.theme-light .collapse-toggle,
+.annotation-screen.theme-light .image-info,
+.annotation-screen.theme-light .panel-title,
+.annotation-screen.theme-light .tool-section-title,
+.annotation-screen.theme-light .picker-value,
+.annotation-screen.theme-light .right-panel-item-meta,
+.annotation-screen.theme-light .right-panel-empty,
+.annotation-screen.theme-light .bbox-confidence,
+.annotation-screen.theme-light .preview-header-title,
+.annotation-screen.theme-light .right-panel-section-header,
+.annotation-screen.theme-light .export-options label {
+  color: var(--light-text-secondary) !important;
+}
+
+.annotation-screen.theme-light .sidebar,
+.annotation-screen.theme-light .tools-panel,
+.annotation-screen.theme-light .right-panel,
+.annotation-screen.theme-light .top-toolbar,
+.annotation-screen.theme-light .right-panel-section,
+.annotation-screen.theme-light .right-panel-item,
+.annotation-screen.theme-light .preview-box,
+.annotation-screen.theme-light .export-options,
+.annotation-screen.theme-light .bottom-status-bar,
+.annotation-screen.theme-light .tab-item,
+.annotation-screen.theme-light .tab-arrow-btn,
+.annotation-screen.theme-light .collapse-toggle,
+.annotation-screen.theme-light input,
+.annotation-screen.theme-light select,
+.annotation-screen.theme-light textarea {
+  border-color: var(--light-border) !important;
+}
+
+.annotation-screen.theme-light .bottom-status-bar,
+.annotation-screen.theme-light .status-left,
+.annotation-screen.theme-light .status-right,
+.annotation-screen.theme-light .right-panel .collapse-toggle,
+.annotation-screen.theme-light .right-panel .collapse-toggle svg,
+.annotation-screen.theme-light .export-options,
+.annotation-screen.theme-light .export-options label,
+.annotation-screen.theme-light .preview-box,
+.annotation-screen.theme-light .image-info {
+  color: var(--light-text-secondary) !important;
+}
+
+.annotation-screen.theme-light .image-info {
+  background: var(--light-orange-elevated) !important;
+  border: 1px solid var(--light-border) !important;
+  color: var(--light-text-primary) !important;
+  box-shadow: 0 4px 12px rgba(120, 83, 38, 0.12) !important;
+}
+
+.annotation-screen.theme-light .settings-modal-overlay {
+  background: rgba(255, 237, 213, 0.72) !important;
+}
+
+.annotation-screen.theme-light .settings-modal-card,
+.annotation-screen.theme-light .settings-modal-content,
+.annotation-screen.theme-light .settings-modal-actions,
+.annotation-screen.theme-light .settings-modal-header,
+.annotation-screen.theme-light .confirm-modal-card {
+  background: var(--light-orange-panel) !important;
+  border-color: var(--light-border) !important;
+  color: var(--light-text-primary) !important;
+  box-shadow: 0 10px 24px rgba(120, 83, 38, 0.16) !important;
+}
+
+.annotation-screen.theme-light .settings-modal-header h2,
+.annotation-screen.theme-light .settings-section h3,
+.annotation-screen.theme-light .settings-field label,
+.annotation-screen.theme-light .settings-description,
+.annotation-screen.theme-light .settings-close-button,
+.annotation-screen.theme-light .confirm-modal-card h2 {
+  color: var(--light-text-primary) !important;
+}
+
+.annotation-screen.theme-light .settings-field input,
+.annotation-screen.theme-light .form-group input {
+  background: var(--light-orange-elevated) !important;
+  border-color: var(--light-border) !important;
+  color: var(--light-text-primary) !important;
+}
+
+.annotation-screen.theme-light .export-modal-overlay {
+  background: rgba(255, 237, 213, 0.72) !important;
+}
+
+.annotation-screen.theme-light .export-modal-card,
+.annotation-screen.theme-light .export-modal-header,
+.annotation-screen.theme-light .export-modal-body,
+.annotation-screen.theme-light .export-modal-item,
+.annotation-screen.theme-light .export-modal-checkbox,
+.annotation-screen.theme-light .export-modal-actions {
+  background: var(--light-orange-panel) !important;
+  border-color: var(--light-border) !important;
+  color: var(--light-text-primary) !important;
+}
+
+.annotation-screen.theme-light .export-modal-header h3,
+.annotation-screen.theme-light .export-modal-subtitle,
+.annotation-screen.theme-light .export-modal-item .checkbox-text,
+.annotation-screen.theme-light .export-modal-actions .secondary-btn,
+.annotation-screen.theme-light .export-modal-actions .secondary-btn svg {
+  color: var(--light-text-primary) !important;
+}
+
+.annotation-screen.theme-light .rating-box {
+  background: var(--light-orange-elevated) !important;
+  border-color: var(--light-border) !important;
+  color: var(--light-text-primary) !important;
+}
+
+.annotation-screen.theme-light .rating-box.selected {
+  background: #fdba74 !important;
+  border-color: rgba(194, 120, 34, 0.6) !important;
+  color: #111827 !important;
+}
+
+.annotation-screen.theme-light .picker-control,
+.annotation-screen.theme-light .picker-dropdown,
+.annotation-screen.theme-light .picker-item,
+.annotation-screen.theme-light .picker-item:hover,
+.annotation-screen.theme-light .picker-item.selected {
+  background: var(--light-orange-elevated) !important;
+  border-color: var(--light-border) !important;
+  color: var(--light-text-primary) !important;
+}
+
+.annotation-screen.theme-light .picker-item-check,
+.annotation-screen.theme-light .picker-value,
+.annotation-screen.theme-light .picker-arrows {
+  color: var(--light-text-primary) !important;
+}
+
+.annotation-screen.theme-light .right-panel .primary-btn,
+.annotation-screen.theme-light .right-panel .secondary-btn,
+.annotation-screen.theme-light .export-modal-actions .primary-btn,
+.annotation-screen.theme-light .settings-save-button,
+.annotation-screen.theme-light .settings-reset-button,
+.annotation-screen.theme-light .settings-cancel-button,
+.annotation-screen.theme-light .confirm-modal-button--primary,
+.annotation-screen.theme-light .confirm-modal-button--secondary,
+.annotation-screen.theme-light .confirm-modal-button {
+  background: #fdba74 !important;
+  border-color: rgba(194, 120, 34, 0.45) !important;
+  color: #111827 !important;
+}
+
+.annotation-screen.theme-light .right-panel .primary-btn:hover,
+.annotation-screen.theme-light .right-panel .secondary-btn:hover,
+.annotation-screen.theme-light .export-modal-actions .primary-btn:hover,
+.annotation-screen.theme-light .settings-save-button:hover,
+.annotation-screen.theme-light .settings-reset-button:hover,
+.annotation-screen.theme-light .settings-cancel-button:hover,
+.annotation-screen.theme-light .confirm-modal-button:hover {
+  background: #fb923c !important;
+  border-color: rgba(194, 120, 34, 0.6) !important;
+  color: #111827 !important;
+}
+
+.annotation-screen.theme-light .export-modal-actions .secondary-btn {
+  background: var(--light-orange-elevated) !important;
+  border-color: var(--light-border) !important;
+  color: var(--light-text-primary) !important;
 }
 
 .workspace {
   --sidebar-width: 260px;
   display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 1fr) 320px;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr) auto;
   flex: 1;
   overflow: hidden;
   height: auto;
@@ -459,7 +679,7 @@ body {
 }
 
 .annotation-screen.sidebar-collapsed .workspace {
-  grid-template-columns: 62px minmax(0, 1fr) 320px;
+  grid-template-columns: 62px minmax(0, 1fr) auto;
 }
 
 .sidebar {
@@ -1085,6 +1305,15 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  transition: all 0.25s ease;
+  overflow-x: hidden;
+}
+
+.right-panel.collapsed {
+  width: 46px;
+  max-width: 46px;
+  padding: 8px 4px;
+  overflow: hidden;
 }
 
 .tab-content {
@@ -1165,11 +1394,19 @@ body {
   accent-color: #f97316;
 }
 
-
 .tab-bar {
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+}
+
+.right-panel.collapsed .tab-bar {
+  gap: 0;
+  margin-bottom: 0;
+  justify-content: flex-end;
+  align-items: center;
+  flex: 1;
+  padding-right: 8px;
 }
 
 .tab-item {
@@ -1182,10 +1419,46 @@ body {
   cursor: pointer;
 }
 
+.tab-arrow-btn {
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(237, 242, 247, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-arrow-btn svg {
+  transition: transform 0.25s ease;
+}
+
+.tab-arrow-btn.collapsed svg {
+  transform: rotate(180deg);
+}
+
+.tab-arrow-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(237, 242, 247, 0.95);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 .tab-item.active {
   background: rgba(255, 255, 255, 0.14);
   color: rgba(237, 242, 247, 0.95);
   border-color: rgba(255, 255, 255, 0.2);
+}
+
+.right-panel.collapsed .tab-item {
+  display: none;
+}
+
+.right-panel.collapsed > :not(.tab-bar) {
+  display: none;
 }
 
 .tab-content {
@@ -1313,7 +1586,9 @@ body {
   background: rgba(10, 14, 24, 0.75);
   color: rgba(237, 242, 247, 0.9);
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.12s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.12s ease;
   display: grid;
   place-items: center;
 }
@@ -1560,7 +1835,11 @@ body {
 .export-modal-card {
   width: min(680px, 92vw);
   max-height: 86vh;
-  background: linear-gradient(155deg, rgba(8, 11, 17, 0.98), rgba(10, 14, 24, 0.98));
+  background: linear-gradient(
+    155deg,
+    rgba(8, 11, 17, 0.98),
+    rgba(10, 14, 24, 0.98)
+  );
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
@@ -1680,7 +1959,11 @@ body {
 }
 
 .export-modal-actions .primary-btn {
-  background: linear-gradient(90deg, rgba(255, 122, 0, 0.95), rgba(255, 88, 0, 0.85));
+  background: linear-gradient(
+    90deg,
+    rgba(255, 122, 0, 0.95),
+    rgba(255, 88, 0, 0.85)
+  );
   border: 1px solid rgba(255, 122, 0, 0.25);
   color: #fff;
 }
@@ -1745,7 +2028,6 @@ body {
   accent-color: #f97316;
 }
 
-
 .settings-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1772,13 +2054,11 @@ body {
   width: 100%;
 }
 
-
 .status-left,
 .status-right {
   display: flex;
   gap: 12px;
 }
-
 
 .confirm-modal-overlay {
   position: fixed;
@@ -1975,7 +2255,9 @@ body {
   font-weight: 700;
   cursor: pointer;
   background: rgba(31, 41, 55, 0.95);
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;

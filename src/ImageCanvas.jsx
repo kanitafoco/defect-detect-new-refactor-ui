@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, X } from "lucide-react";
 import "./App.css";
-import defaultImage from "./assets/hero.png";
+import defaultImage from "./assets/sample-inspection.jpg";
 
 function ImageCanvas({
   zoom = 100,
@@ -31,7 +31,7 @@ function ImageCanvas({
     };
   }, [file]);
 
-  const source = file ? objectUrl : imageSrc || defaultImage;
+  const source = file ? objectUrl : defaultImage;
 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
