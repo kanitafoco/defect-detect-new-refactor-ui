@@ -180,6 +180,7 @@ function AnnotationScreen({
         <main className="workspace-main">
           <ImageCanvas
             zoom={zoom}
+            onZoomChange={onZoomChange}
             imageSrc={heroImage}
             file={file}
             detections={detections}

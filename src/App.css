@@ -801,6 +801,11 @@ body:has(.annotation-screen.theme-light),
   display: inline-block;
 }
 
+.image-overlay-layer {
+  position: absolute;
+  inset: 0;
+}
+
 .canvas-image {
   display: block;
   max-width: 100%;
@@ -812,34 +817,49 @@ body:has(.annotation-screen.theme-light),
 
 .bbox {
   position: absolute;
-  border: 2px solid rgba(52, 211, 153, 0.9);
-  background: rgba(52, 211, 153, 0.12);
-  border-radius: 4px;
+  border: 2px solid var(--bbox-color, rgba(52, 211, 153, 0.95));
+  background: rgba(52, 211, 153, 0.1);
+  border-radius: 10px;
   pointer-events: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 6px 14px rgba(0, 0, 0, 0.22);
 }
 
 .bbox-label {
   position: absolute;
-  top: -24px;
-  left: -2px;
+  top: -28px;
+  left: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: rgba(20, 25, 35, 0.9);
-  color: rgba(237, 242, 247, 0.9);
-  font-size: 0.8rem;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  background: var(--bbox-label-bg, rgba(20, 25, 35, 0.92));
+  color: var(--bbox-label-text, rgba(237, 242, 247, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 0.74rem;
   font-weight: 600;
   white-space: nowrap;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  z-index: 2;
 }
 
 .bbox-name {
-  color: rgba(52, 211, 153, 0.95);
+  color: var(--bbox-label-text, rgba(237, 242, 247, 0.95));
 }
 
 .bbox-confidence {
-  color: rgba(237, 242, 247, 0.7);
+  color: var(--bbox-label-muted, rgba(237, 242, 247, 0.82));
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.32);
+}
+
+.bbox.dashed {
+  border-style: dashed;
 }
 
 /* Sidebar panels */
