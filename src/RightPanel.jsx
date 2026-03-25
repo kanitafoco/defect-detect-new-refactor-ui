@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Check,
   X,
@@ -44,6 +44,9 @@ export default function RightPanel({
   const [fullscreenMode, setFullscreenMode] = useState(null);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [fullscreenZoom, setFullscreenZoom] = useState(1);
+  const [isPanningFullscreen, setIsPanningFullscreen] = useState(false);
+  const fullscreenViewportRef = useRef(null);
+  const panStartRef = useRef({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 });
 
   const [maskExport, setMaskExport] = useState(false);
   const [jsonCollective, setJsonCollective] = useState(true);
@@ -112,6 +115,7 @@ export default function RightPanel({
     setFullscreenMode(mode);
     setFullscreenIndex(index);
     setFullscreenZoom(zoom);
+    setIsPanningFullscreen(false);
   };
 
   const closeFullscreen = () => {
@@ -124,6 +128,7 @@ export default function RightPanel({
       setPatchZoom(fullscreenZoom);
     }
 
+    setIsPanningFullscreen(false);
     setFullscreenMode(null);
   };
 
@@ -143,6 +148,42 @@ export default function RightPanel({
       if (fullscreenMode === "patch") setPatchZoom(next);
       return next;
     });
+  };
+
+  const onFullscreenMouseDown = (event) => {
+    if (event.button !== 0 || !fullscreenViewportRef.current) return;
+
+    const viewport = fullscreenViewportRef.current;
+    setIsPanningFullscreen(true);
+    panStartRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      scrollLeft: viewport.scrollLeft,
+      scrollTop: viewport.scrollTop,
+    };
+  };
+
+  const onFullscreenMouseMove = (event) => {
+    if (!isPanningFullscreen || !fullscreenViewportRef.current) return;
+
+    const viewport = fullscreenViewportRef.current;
+    const dx = event.clientX - panStartRef.current.x;
+    const dy = event.clientY - panStartRef.current.y;
+    viewport.scrollLeft = panStartRef.current.scrollLeft - dx;
+    viewport.scrollTop = panStartRef.current.scrollTop - dy;
+  };
+
+  const endFullscreenPan = () => {
+    setIsPanningFullscreen(false);
+  };
+
+  const onFullscreenWheel = (event) => {
+    // Preserve natural scroll by default; use Cmd/Ctrl + wheel to zoom.
+    if (!event.metaKey && !event.ctrlKey) return;
+
+    event.preventDefault();
+    const step = event.deltaY < 0 ? 0.1 : -0.1;
+    changeFullscreenZoom(step);
   };
 
   useEffect(() => {
@@ -176,6 +217,18 @@ export default function RightPanel({
       setFullscreenIndex(patchIndex);
     }
   }, [fullscreenMode, maskIndex, patchIndex]);
+
+  useEffect(() => {
+    if (!fullscreenMode) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      setIsPanningFullscreen(false);
+    };
+  }, [fullscreenMode]);
 
   return (
     <aside className={`right-panel ${isCollapsed ? "collapsed" : ""}`}>
@@ -474,10 +527,24 @@ export default function RightPanel({
                 </button>
                 {expandPreview && (
                   <div className="preview-actions">
-                    <button type="button" className="secondary-btn">
+                    <button
+                      type="button"
+                      className="secondary-btn"
+                      disabled={!maskCount}
+                      onClick={() =>
+                        openFullscreen("mask", maskIndex, maskZoom)
+                      }
+                    >
                       Show Masks
                     </button>
-                    <button type="button" className="secondary-btn">
+                    <button
+                      type="button"
+                      className="secondary-btn"
+                      disabled={!patchCount}
+                      onClick={() =>
+                        openFullscreen("patch", patchIndex, patchZoom)
+                      }
+                    >
                       Preview Patches
                     </button>
                   </div>
@@ -901,8 +968,39 @@ export default function RightPanel({
             </div>
             <div
               className="fullscreen-body"
-              style={{ transform: `scale(${fullscreenZoom})` }}
+              onMouseUp={endFullscreenPan}
+              onMouseLeave={endFullscreenPan}
             >
+              <div
+                ref={fullscreenViewportRef}
+                className={`fullscreen-viewport ${isPanningFullscreen ? "is-panning" : ""}`}
+                onMouseDown={onFullscreenMouseDown}
+                onMouseMove={onFullscreenMouseMove}
+                onWheel={onFullscreenWheel}
+              >
+                <div
+                  className="fullscreen-canvas"
+                  style={{
+                    width: `${fullscreenZoom * 100}%`,
+                    height: `${fullscreenZoom * 100}%`,
+                  }}
+                >
+                  {fullscreenItem ? (
+                    <div className="preview-image">
+                      <div className="preview-image-label">
+                        {fullscreenItem.class_name} •{" "}
+                        {Math.round((fullscreenItem.confidence ?? 0) * 100)}%
+                      </div>
+                      <div className="preview-image-placeholder">
+                        {fullscreenItem.class_name} preview
+                      </div>
+                    </div>
+                  ) : (
+                    "Nothing to show"
+                  )}
+                </div>
+              </div>
+
               <button
                 type="button"
                 className="fullscreen-nav-btn fullscreen-nav-btn--left"
@@ -923,20 +1021,6 @@ export default function RightPanel({
               >
                 <ChevronRight size={20} />
               </button>
-
-              {fullscreenItem ? (
-                <div className="preview-image">
-                  <div className="preview-image-label">
-                    {fullscreenItem.class_name} •{" "}
-                    {Math.round((fullscreenItem.confidence ?? 0) * 100)}%
-                  </div>
-                  <div className="preview-image-placeholder">
-                    {fullscreenItem.class_name} preview
-                  </div>
-                </div>
-              ) : (
-                "Nothing to show"
-              )}
             </div>
           </div>
         </div>
