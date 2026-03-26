@@ -6,7 +6,8 @@ import {
   PenTool,
   Hexagon,
   Eraser,
-  Layers,
+  Sparkles,
+  FileText,
   Search,
 } from "lucide-react";
 import "./App.css";
@@ -48,8 +49,8 @@ function SidebarTools({ expanded = true, onToggleExpand }) {
         items: [
           {
             key: "SmartPropagate",
-            label: "Smart Propagate",
-            icon: <Layers size={18} />,
+            label: "Auto Annotate",
+            icon: <Sparkles size={18} />,
           },
           {
             key: "DefectScan",
@@ -58,8 +59,8 @@ function SidebarTools({ expanded = true, onToggleExpand }) {
           },
           {
             key: "PatchExtract",
-            label: "Patch Extract",
-            icon: <Layers size={18} />,
+            label: "Report",
+            icon: <FileText size={18} />,
           },
         ],
       },

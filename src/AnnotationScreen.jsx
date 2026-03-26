@@ -152,10 +152,6 @@ function AnnotationScreen({
       <TopToolbar
         zoom={zoom}
         onZoomChange={onZoomChange}
-        aiProcessing={false}
-        pendingCount={detections.length}
-        onRunAI={() => {}}
-        onAcceptAll={() => {}}
         onOpenSettings={() => setSettingsOpen(true)}
         onLogoClick={onLogoClick}
         darkMode={darkMode}
@@ -204,25 +200,7 @@ function AnnotationScreen({
           />
         </main>
 
-        <RightPanel
-          detections={detections}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-          onAccept={(id) => {
-            setAnnotations((prev) =>
-              prev.map((item) =>
-                item.id === id ? { ...item, status: "confirmed" } : item,
-              ),
-            );
-          }}
-          onReject={(id) => {
-            setAnnotations((prev) =>
-              prev.map((item) =>
-                item.id === id ? { ...item, status: "rejected" } : item,
-              ),
-            );
-          }}
-        />
+        <RightPanel detections={detections} />
       </div>
 
       <div className="bottom-status-bar">

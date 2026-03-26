@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, X } from "lucide-react";
 import "./App.css";
 import defaultImage from "./assets/sample-inspection.jpg";
 import PanZoomBoard from "./PanZoomBoard";
@@ -290,7 +289,18 @@ function ImageCanvas({
   }, [selectedBox, boxes]);
 
   return (
-    <div className="image-canvas">
+    <div
+      className="image-canvas"
+      style={{
+        width: "100%",
+        height: "100%",
+        minHeight: "100vh",
+        backgroundColor: "#1e1e1e",
+        backgroundImage:
+          "radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)",
+        backgroundSize: "20px 20px",
+      }}
+    >
       {!source ? (
         <div className="workspace-empty">No image loaded</div>
       ) : (
@@ -309,11 +319,19 @@ function ImageCanvas({
                 onZoomChange(Math.round(nextScale * 100));
               }
             }}
-            style={{ backgroundImage: "none" }}
+            style={{
+              width: "100%",
+              height: "100%",
+              minHeight: "100%",
+              background: "transparent",
+              backgroundColor: "transparent",
+              backgroundImage: "none",
+              boxShadow: "none",
+            }}
           >
             <div
               className="image-canvas-inner"
-              style={{ position: "relative" }}
+              style={{ position: "relative", background: "transparent" }}
             >
               <img
                 ref={imgRef}
@@ -333,94 +351,6 @@ function ImageCanvas({
                   }
                 }}
               />
-              <div
-                className="image-overlay-layer"
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  zIndex: 10,
-                }}
-              >
-                {boxes.map((box) => {
-                  const isSelected = selectedBox === box.index;
-                  return (
-                    <div
-                      key={box.key}
-                      className={`bbox ${box.isDashed ? "dashed" : ""} ${isSelected ? "selected" : ""}`}
-                      style={{
-                        position: "absolute",
-                        top: box.top,
-                        left: box.left,
-                        width: box.width,
-                        height: box.height,
-                        zIndex: isSelected ? 2500 : box.zIndex,
-                        borderColor: box.classStyle.color,
-                        background: box.classStyle.boxBg,
-                        borderWidth: isSelected ? 3 : 2,
-                        borderRadius: 10,
-                        boxSizing: "border-box",
-                        outline: `1px solid ${box.classStyle.color}66`,
-                        boxShadow: isSelected
-                          ? `0 0 0 2px ${box.classStyle.color}66, 0 10px 24px rgba(0, 0, 0, 0.35)`
-                          : "0 6px 14px rgba(0, 0, 0, 0.22)",
-                        pointerEvents: "auto",
-                        cursor: "pointer",
-                        borderStyle: box.isDashed ? "dashed" : "solid",
-                        "--bbox-color": box.classStyle.color,
-                        "--bbox-label-bg": box.classStyle.badgeBg,
-                        "--bbox-label-text": box.classStyle.text,
-                        "--bbox-label-muted": box.classStyle.muted,
-                      }}
-                      onMouseDown={(e) => {
-                        e.stopPropagation();
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedBox(box.index);
-                        onSelect?.(box.id);
-                      }}
-                    >
-                      <div
-                        className="bbox-label"
-                        style={{ position: "absolute", top: -28, left: 0 }}
-                      >
-                        <span className="bbox-name">{box.label}</span>
-                        {typeof box.confidence === "number" ? (
-                          <span className="bbox-confidence">
-                            {(box.confidence * 100).toFixed(0)}%
-                          </span>
-                        ) : null}
-                      </div>
-                      {isSelected ? (
-                        <div className="bbox-actions">
-                          <button
-                            type="button"
-                            className="bbox-action-btn bbox-action-btn-accept"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onAccept?.(box.id);
-                            }}
-                            title="Accept"
-                          >
-                            <Check size={12} />
-                          </button>
-                          <button
-                            type="button"
-                            className="bbox-action-btn bbox-action-btn-reject"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onReject?.(box.id);
-                            }}
-                            title="Reject"
-                          >
-                            <X size={12} />
-                          </button>
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })}
-              </div>
             </div>
           </PanZoomBoard>
         </>
