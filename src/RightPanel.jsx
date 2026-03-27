@@ -20,7 +20,7 @@ export default function RightPanel({ detections = [] }) {
     horizontalStride: 50,
     verticalStride: 50,
   });
-  const [showPatches, setShowPatches] = useState(false);
+  const [showPatches, setShowPatches] = useState(true);
   const [patchesCreated, setPatchesCreated] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [expandPreview, setExpandPreview] = useState(true);
@@ -215,496 +215,421 @@ export default function RightPanel({ detections = [] }) {
   }, [fullscreenMode]);
 
   return (
-    <aside className={`right-panel ${isCollapsed ? "collapsed" : ""}`}>
-      <div className="tab-bar">
-        <button
-          type="button"
-          className={`tab-item ${activeTab === "annotations" ? "active" : ""}`}
-          onClick={() => setActiveTab("annotations")}
-        >
-          Annotations
-        </button>
-        <button
-          type="button"
-          className={`tab-item ${activeTab === "patches" ? "active" : ""}`}
-          onClick={() => {
-            setActiveTab("patches");
-            setShowPatches(true);
-          }}
-        >
-          Export & Patches
-        </button>
-        <button
-          type="button"
-          className={`tab-arrow-btn ${isCollapsed ? "collapsed" : ""}`}
-          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          onClick={() => setIsCollapsed((prev) => !prev)}
-        >
-          <ChevronRight size={14} />
-        </button>
-      </div>
-
-      {activeTab === "annotations" ? (
-        <div className="tab-content">
-          <div
-            style={{ padding: "20px", textAlign: "center", color: "#9ca3af" }}
+    <>
+      <aside className={`right-panel ${isCollapsed ? "collapsed" : ""}`}>
+        <div className="tab-bar">
+          <button
+            type="button"
+            className={`tab-item ${activeTab === "annotations" ? "active" : ""}`}
+            onClick={() => setActiveTab("annotations")}
           >
-            Annotations tab is empty
-          </div>
+            Annotations
+          </button>
+          <button
+            type="button"
+            className={`tab-item ${activeTab === "patches" ? "active" : ""}`}
+            onClick={() => {
+              setActiveTab("patches");
+              setShowPatches(true);
+            }}
+          >
+            Export & Patches
+          </button>
+          <button
+            type="button"
+            className={`tab-arrow-btn ${isCollapsed ? "collapsed" : ""}`}
+            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            onClick={() => setIsCollapsed((prev) => !prev)}
+          >
+            <ChevronRight size={14} />
+          </button>
         </div>
-      ) : (
-        <div className="tab-content patches-content">
-          <div className="right-panel-section">
-            <div className="right-panel-section-header">Create Patches</div>
-            <div className="form-group">
-              <label>Width</label>
-              <input
-                type="number"
-                value={patchSettings.width}
-                onChange={(e) =>
-                  setPatchSettings((prev) => ({
-                    ...prev,
-                    width: Number(e.target.value),
-                  }))
-                }
-              />
-            </div>
-            <div className="form-group">
-              <label>Height</label>
-              <input
-                type="number"
-                value={patchSettings.height}
-                onChange={(e) =>
-                  setPatchSettings((prev) => ({
-                    ...prev,
-                    height: Number(e.target.value),
-                  }))
-                }
-              />
-            </div>
-            <div className="form-group">
-              <label>Horizontal stride</label>
-              <input
-                type="number"
-                value={patchSettings.horizontalStride}
-                onChange={(e) =>
-                  setPatchSettings((prev) => ({
-                    ...prev,
-                    horizontalStride: Number(e.target.value),
-                  }))
-                }
-              />
-            </div>
-            <div className="form-group">
-              <label>Vertical stride</label>
-              <input
-                type="number"
-                value={patchSettings.verticalStride}
-                onChange={(e) =>
-                  setPatchSettings((prev) => ({
-                    ...prev,
-                    verticalStride: Number(e.target.value),
-                  }))
-                }
-              />
-            </div>
-            <button
-              type="button"
-              className="primary-btn"
-              onClick={() => {
-                setShowPatches(true);
-                setPatchesCreated(true);
-              }}
+
+        {activeTab === "annotations" ? (
+          <div className="tab-content">
+            <div
+              style={{ padding: "20px", textAlign: "center", color: "#9ca3af" }}
             >
-              Create Patches
-            </button>
+              Annotations tab is empty
+            </div>
           </div>
-
-          {showPatches && (
-            <>
-              <div className="right-panel-section">
-                <button
-                  type="button"
-                  className="collapse-toggle"
-                  onClick={() => setExpandPreview((prev) => !prev)}
-                >
-                  <span>Preview</span>
-                  {expandPreview ? (
-                    <ChevronUp size={16} />
-                  ) : (
-                    <ChevronDown size={16} />
-                  )}
-                </button>
-                {expandPreview && (
-                  <div className="preview-actions">
-                    <button
-                      type="button"
-                      className="secondary-btn"
-                      disabled={!maskCount}
-                      onClick={() =>
-                        openFullscreen("mask", maskIndex, maskZoom)
-                      }
-                    >
-                      Show Masks
-                    </button>
-                    <button
-                      type="button"
-                      className="secondary-btn"
-                      disabled={!patchCount}
-                      onClick={() =>
-                        openFullscreen("patch", patchIndex, patchZoom)
-                      }
-                    >
-                      Preview Patches
-                    </button>
-                  </div>
-                )}
+        ) : (
+          <div className="tab-content patches-content">
+            <div className="right-panel-section create-patches-section">
+              <div className="right-panel-section-header">Create Patches</div>
+              <div className="form-group">
+                <label>Width</label>
+                <input
+                  type="number"
+                  value={patchSettings.width}
+                  onChange={(e) =>
+                    setPatchSettings((prev) => ({
+                      ...prev,
+                      width: Number(e.target.value),
+                    }))
+                  }
+                />
               </div>
-
-              <div className="right-panel-section">
-                <div className="section-header-with-controls">
-                  <button
-                    type="button"
-                    className="collapse-toggle"
-                    onClick={() => setExpandMasks((prev) => !prev)}
-                  >
-                    <span>Masks</span>
-                    {expandMasks ? (
-                      <ChevronUp size={16} />
-                    ) : (
-                      <ChevronDown size={16} />
-                    )}
-                  </button>
-                  <div className="preview-header-actions">
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      disabled={!maskCount}
-                      onClick={() =>
-                        setMaskIndex((prev) => clampIndex(prev, -1, maskCount))
-                      }
-                      title="Previous mask"
-                    >
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      disabled={!maskCount}
-                      onClick={() =>
-                        setMaskIndex((prev) => clampIndex(prev, 1, maskCount))
-                      }
-                      title="Next mask"
-                    >
-                      <ChevronRight size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      disabled={!maskCount}
-                      onClick={() =>
-                        setMaskZoom((prev) => clampZoom(prev - 0.1))
-                      }
-                      title="Zoom out"
-                    >
-                      <ZoomOut size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      disabled={!maskCount}
-                      onClick={() =>
-                        setMaskZoom((prev) => clampZoom(prev + 0.1))
-                      }
-                      title="Zoom in"
-                    >
-                      <ZoomIn size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      disabled={!maskCount}
-                      onClick={() =>
-                        openFullscreen("mask", maskIndex, maskZoom)
-                      }
-                      title="Fullscreen"
-                    >
-                      <Maximize2 size={14} />
-                    </button>
-                  </div>
-                </div>
-                {expandMasks && (
-                  <div className="preview-box">
-                    <div
-                      className="preview-content"
-                      style={{ transform: `scale(${maskZoom})` }}
-                    >
-                      {maskItem ? (
-                        <div className="preview-image">
-                          <div className="preview-image-label">
-                            {`Mask defect ${maskIndex + 1}`}
-                          </div>
-                          <div className="preview-image-placeholder" />
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                )}
+              <div className="form-group">
+                <label>Height</label>
+                <input
+                  type="number"
+                  value={patchSettings.height}
+                  onChange={(e) =>
+                    setPatchSettings((prev) => ({
+                      ...prev,
+                      height: Number(e.target.value),
+                    }))
+                  }
+                />
               </div>
-
-              <div className="right-panel-section">
-                <div className="section-header-with-controls">
-                  <button
-                    type="button"
-                    className="collapse-toggle"
-                    onClick={() => setExpandPatchView((prev) => !prev)}
-                  >
-                    <span>Patch View</span>
-                    {expandPatchView ? (
-                      <ChevronUp size={16} />
-                    ) : (
-                      <ChevronDown size={16} />
-                    )}
-                  </button>
-                  <div className="preview-header-actions">
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      disabled={!patchCount}
-                      onClick={() =>
-                        setPatchIndex((prev) =>
-                          clampIndex(prev, -1, patchCount),
-                        )
-                      }
-                      title="Previous patch"
-                    >
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      disabled={!patchCount}
-                      onClick={() =>
-                        setPatchIndex((prev) => clampIndex(prev, 1, patchCount))
-                      }
-                      title="Next patch"
-                    >
-                      <ChevronRight size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      disabled={!patchCount}
-                      onClick={() =>
-                        setPatchZoom((prev) => clampZoom(prev - 0.1))
-                      }
-                      title="Zoom out"
-                    >
-                      <ZoomOut size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      disabled={!patchCount}
-                      onClick={() =>
-                        setPatchZoom((prev) => clampZoom(prev + 0.1))
-                      }
-                      title="Zoom in"
-                    >
-                      <ZoomIn size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      disabled={!patchCount}
-                      onClick={() =>
-                        openFullscreen("patch", patchIndex, patchZoom)
-                      }
-                      title="Fullscreen"
-                    >
-                      <Maximize2 size={14} />
-                    </button>
-                  </div>
-                </div>
-                {expandPatchView && (
-                  <div className="preview-box">
-                    <div
-                      className="preview-content"
-                      style={{ transform: `scale(${patchZoom})` }}
-                    >
-                      {patchItem ? (
-                        <div className="preview-image">
-                          <div className="preview-image-label">
-                            {`Patch defect ${patchIndex + 1}`}
-                          </div>
-                          <div className="preview-image-placeholder" />
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                )}
+              <div className="form-group">
+                <label>Horizontal stride</label>
+                <input
+                  type="number"
+                  value={patchSettings.horizontalStride}
+                  onChange={(e) =>
+                    setPatchSettings((prev) => ({
+                      ...prev,
+                      horizontalStride: Number(e.target.value),
+                    }))
+                  }
+                />
               </div>
-
-              <div className="right-panel-section">
-                <button
-                  type="button"
-                  className="collapse-toggle"
-                  onClick={() => setExpandExportOptions((prev) => !prev)}
-                >
-                  <span>Export Options</span>
-                  {expandExportOptions ? (
-                    <ChevronUp size={16} />
-                  ) : (
-                    <ChevronDown size={16} />
-                  )}
-                </button>
-                {expandExportOptions && (
-                  <div
-                    className={`export-options ${patchesCreated ? "active" : "disabled"}`}
-                  >
-                    <label>
-                      <span>Mask export</span>
-                      <input
-                        type="checkbox"
-                        checked={maskExport}
-                        onChange={(e) => setMaskExport(e.target.checked)}
-                      />
-                    </label>
-                    <label>
-                      <span>JSON export (Collective)</span>
-                      <input
-                        type="checkbox"
-                        checked={jsonCollective}
-                        onChange={(e) => setJsonCollective(e.target.checked)}
-                      />
-                    </label>
-                    <label>
-                      <span>JSON export (Individual)</span>
-                      <input
-                        type="checkbox"
-                        checked={jsonIndividual}
-                        onChange={(e) => setJsonIndividual(e.target.checked)}
-                      />
-                    </label>
-                    <label>
-                      <span>YOLO export</span>
-                      <input
-                        type="checkbox"
-                        checked={yoloExport}
-                        onChange={(e) => setYoloExport(e.target.checked)}
-                      />
-                    </label>
-                    <label>
-                      <span>Pascal VOC export</span>
-                      <input
-                        type="checkbox"
-                        checked={pascalExport}
-                        onChange={(e) => setPascalExport(e.target.checked)}
-                      />
-                    </label>
-                  </div>
-                )}
+              <div className="form-group">
+                <label>Vertical stride</label>
+                <input
+                  type="number"
+                  value={patchSettings.verticalStride}
+                  onChange={(e) =>
+                    setPatchSettings((prev) => ({
+                      ...prev,
+                      verticalStride: Number(e.target.value),
+                    }))
+                  }
+                />
               </div>
-
-              <div className="right-panel-section export-action-group">
-                <button type="button" className="primary-btn">
-                  <Download size={14} style={{ marginRight: 6 }} />
-                  Export All Patches
-                </button>
-                <button
-                  type="button"
-                  className="secondary-btn"
-                  onClick={() => setShowExportModal(true)}
-                >
-                  <Layers size={14} style={{ marginRight: 6 }} />
-                  Export Selected Patches
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
-      {showExportModal && (
-        <div
-          className="export-modal-overlay"
-          onClick={() => setShowExportModal(false)}
-        >
-          <div
-            className="export-modal-card"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="export-modal-header">
-              <h3>Export Selected Patches</h3>
-              <button
-                type="button"
-                className="icon-btn"
-                onClick={() => setShowExportModal(false)}
-                title="Close"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            <div className="export-modal-body">
-              <p className="export-modal-subtitle">
-                Choose ratings for selected defects
-              </p>
-              <div className="export-modal-list">
-                {detections.length > 0 ? (
-                  detections.map((det, index) => (
-                    <div key={det.id} className="export-modal-item">
-                      <div className="export-modal-item-main">
-                        <span className="checkbox-text">{`Defect ${index + 1}`}</span>
-                        <div className="rating-options">
-                          {[0, 1, 2].map((value) => {
-                            const isSelected = ratingById[det.id] === value;
-                            return (
-                              <button
-                                key={value}
-                                type="button"
-                                className={`rating-box ${isSelected ? "selected" : ""}`}
-                                onClick={() =>
-                                  handleRatingChange(det.id, value)
-                                }
-                                title={`Select rating ${value}`}
-                                aria-label={`Rating ${value}`}
-                              >
-                                {value}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="right-panel-empty">
-                    No annotations available
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="export-modal-actions">
-              <button
-                type="button"
-                className="secondary-btn"
-                onClick={() => setShowExportModal(false)}
-              >
-                Cancel
-              </button>
               <button
                 type="button"
                 className="primary-btn"
                 onClick={() => {
-                  setShowExportModal(false);
+                  setShowPatches(true);
+                  setPatchesCreated(true);
                 }}
               >
-                Export
+                Create Patches
               </button>
             </div>
+
+            {showPatches && (
+              <>
+                <div className="right-panel-section">
+                  <button
+                    type="button"
+                    className="collapse-toggle"
+                    onClick={() => setExpandPreview((prev) => !prev)}
+                  >
+                    <span>Preview</span>
+                    {expandPreview ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    )}
+                  </button>
+                  {expandPreview && (
+                    <div className="preview-actions">
+                      <button
+                        type="button"
+                        className="secondary-btn"
+                        disabled={!maskCount}
+                        onClick={() =>
+                          openFullscreen("mask", maskIndex, maskZoom)
+                        }
+                      >
+                        Show Masks
+                      </button>
+                      <button
+                        type="button"
+                        className="secondary-btn"
+                        disabled={!patchCount}
+                        onClick={() =>
+                          openFullscreen("patch", patchIndex, patchZoom)
+                        }
+                      >
+                        Preview Patches
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="right-panel-section">
+                  <div className="section-header-with-controls">
+                    <button
+                      type="button"
+                      className="collapse-toggle"
+                      onClick={() => setExpandMasks((prev) => !prev)}
+                    >
+                      <span>Masks</span>
+                      {expandMasks ? (
+                        <ChevronUp size={16} />
+                      ) : (
+                        <ChevronDown size={16} />
+                      )}
+                    </button>
+                    <div className="preview-header-actions">
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        disabled={!maskCount}
+                        onClick={() =>
+                          setMaskIndex((prev) =>
+                            clampIndex(prev, -1, maskCount),
+                          )
+                        }
+                        title="Previous mask"
+                      >
+                        <ChevronLeft size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        disabled={!maskCount}
+                        onClick={() =>
+                          setMaskIndex((prev) => clampIndex(prev, 1, maskCount))
+                        }
+                        title="Next mask"
+                      >
+                        <ChevronRight size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        disabled={!maskCount}
+                        onClick={() =>
+                          setMaskZoom((prev) => clampZoom(prev - 0.1))
+                        }
+                        title="Zoom out"
+                      >
+                        <ZoomOut size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        disabled={!maskCount}
+                        onClick={() =>
+                          setMaskZoom((prev) => clampZoom(prev + 0.1))
+                        }
+                        title="Zoom in"
+                      >
+                        <ZoomIn size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        disabled={!maskCount}
+                        onClick={() =>
+                          openFullscreen("mask", maskIndex, maskZoom)
+                        }
+                        title="Fullscreen"
+                      >
+                        <Maximize2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                  {expandMasks && (
+                    <div className="preview-box">
+                      <div
+                        className="preview-content"
+                        style={{ transform: `scale(${maskZoom})` }}
+                      >
+                        {maskItem ? (
+                          <div className="preview-image">
+                            <div className="preview-image-label">
+                              {`Mask defect ${maskIndex + 1}`}
+                            </div>
+                            <div className="preview-image-placeholder" />
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="right-panel-section">
+                  <div className="section-header-with-controls">
+                    <button
+                      type="button"
+                      className="collapse-toggle"
+                      onClick={() => setExpandPatchView((prev) => !prev)}
+                    >
+                      <span>Patch View</span>
+                      {expandPatchView ? (
+                        <ChevronUp size={16} />
+                      ) : (
+                        <ChevronDown size={16} />
+                      )}
+                    </button>
+                    <div className="preview-header-actions">
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        disabled={!patchCount}
+                        onClick={() =>
+                          setPatchIndex((prev) =>
+                            clampIndex(prev, -1, patchCount),
+                          )
+                        }
+                        title="Previous patch"
+                      >
+                        <ChevronLeft size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        disabled={!patchCount}
+                        onClick={() =>
+                          setPatchIndex((prev) =>
+                            clampIndex(prev, 1, patchCount),
+                          )
+                        }
+                        title="Next patch"
+                      >
+                        <ChevronRight size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        disabled={!patchCount}
+                        onClick={() =>
+                          setPatchZoom((prev) => clampZoom(prev - 0.1))
+                        }
+                        title="Zoom out"
+                      >
+                        <ZoomOut size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        disabled={!patchCount}
+                        onClick={() =>
+                          setPatchZoom((prev) => clampZoom(prev + 0.1))
+                        }
+                        title="Zoom in"
+                      >
+                        <ZoomIn size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        disabled={!patchCount}
+                        onClick={() =>
+                          openFullscreen("patch", patchIndex, patchZoom)
+                        }
+                        title="Fullscreen"
+                      >
+                        <Maximize2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                  {expandPatchView && (
+                    <div className="preview-box">
+                      <div
+                        className="preview-content"
+                        style={{ transform: `scale(${patchZoom})` }}
+                      >
+                        {patchItem ? (
+                          <div className="preview-image">
+                            <div className="preview-image-label">
+                              {`Patch defect ${patchIndex + 1}`}
+                            </div>
+                            <div className="preview-image-placeholder" />
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="right-panel-section">
+                  <button
+                    type="button"
+                    className="collapse-toggle"
+                    onClick={() => setExpandExportOptions((prev) => !prev)}
+                  >
+                    <span>Export Options</span>
+                    {expandExportOptions ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    )}
+                  </button>
+                  {expandExportOptions && (
+                    <div
+                      className={`export-options ${patchesCreated ? "active" : "disabled"}`}
+                    >
+                      <label>
+                        <span>Mask export</span>
+                        <input
+                          type="checkbox"
+                          checked={maskExport}
+                          onChange={(e) => setMaskExport(e.target.checked)}
+                        />
+                      </label>
+                      <label>
+                        <span>JSON export (Collective)</span>
+                        <input
+                          type="checkbox"
+                          checked={jsonCollective}
+                          onChange={(e) => setJsonCollective(e.target.checked)}
+                        />
+                      </label>
+                      <label>
+                        <span>JSON export (Individual)</span>
+                        <input
+                          type="checkbox"
+                          checked={jsonIndividual}
+                          onChange={(e) => setJsonIndividual(e.target.checked)}
+                        />
+                      </label>
+                      <label>
+                        <span>YOLO export</span>
+                        <input
+                          type="checkbox"
+                          checked={yoloExport}
+                          onChange={(e) => setYoloExport(e.target.checked)}
+                        />
+                      </label>
+                      <label>
+                        <span>Pascal VOC export</span>
+                        <input
+                          type="checkbox"
+                          checked={pascalExport}
+                          onChange={(e) => setPascalExport(e.target.checked)}
+                        />
+                      </label>
+                    </div>
+                  )}
+                </div>
+
+                <div className="right-panel-section export-action-group">
+                  <button type="button" className="primary-btn">
+                    <Download size={14} style={{ marginRight: 6 }} />
+                    Export All Patches
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary-btn"
+                    onClick={() => setShowExportModal(true)}
+                  >
+                    <Layers size={14} style={{ marginRight: 6 }} />
+                    Export Selected Patches
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-        </div>
-      )}
+        )}
+      </aside>
 
       {fullscreenMode && (
         <div className="fullscreen-overlay" onClick={closeFullscreen}>
@@ -819,6 +744,87 @@ export default function RightPanel({ detections = [] }) {
           </div>
         </div>
       )}
-    </aside>
+
+      {showExportModal && (
+        <div
+          className="export-modal-overlay"
+          onClick={() => setShowExportModal(false)}
+        >
+          <div
+            className="export-modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="export-modal-header">
+              <h3>Export Selected Patches</h3>
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={() => setShowExportModal(false)}
+                title="Close"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="export-modal-body">
+              <p className="export-modal-subtitle">
+                Choose ratings for selected defects
+              </p>
+              <div className="export-modal-list">
+                {detections.length > 0 ? (
+                  detections.map((det, index) => (
+                    <div key={det.id} className="export-modal-item">
+                      <div className="export-modal-item-main">
+                        <span className="checkbox-text">{`Defect ${index + 1}`}</span>
+                        <div className="rating-options">
+                          {[0, 1, 2].map((value) => {
+                            const isSelected = ratingById[det.id] === value;
+                            return (
+                              <button
+                                key={value}
+                                type="button"
+                                className={`rating-box ${isSelected ? "selected" : ""}`}
+                                onClick={() =>
+                                  handleRatingChange(det.id, value)
+                                }
+                                title={`Select rating ${value}`}
+                                aria-label={`Rating ${value}`}
+                              >
+                                {value}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="right-panel-empty">
+                    No annotations available
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="export-modal-actions">
+              <button
+                type="button"
+                className="secondary-btn"
+                onClick={() => setShowExportModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="primary-btn"
+                onClick={() => {
+                  setShowExportModal(false);
+                }}
+              >
+                Export
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

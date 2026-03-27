@@ -685,7 +685,15 @@ body:has(.annotation-screen.theme-light),
 .sidebar {
   padding: 18px 10px;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(10, 14, 24, 0.92);
+  background-color: rgba(255, 255, 255, 0.06);
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02)
+  );
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
   height: 100%;
 
   display: flex;
@@ -770,17 +778,47 @@ body:has(.annotation-screen.theme-light),
   padding: 20px;
 }
 
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.image-info-overlay {
+  position: absolute;
+  bottom: 44px;
+  left: 8px;
+  z-index: 9999;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.88);
+  background: linear-gradient(
+    135deg,
+    rgba(70, 80, 100, 0.5),
+    rgba(40, 50, 70, 0.4)
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+
 .image-info {
   position: absolute;
-  bottom: 12px;
-  left: 12px;
+  bottom: 16px;
+  left: 16px;
   background: rgba(20, 25, 35, 0.85);
   color: rgba(237, 242, 247, 0.9);
   padding: 6px 10px;
   border-radius: 10px;
   font-size: 0.8rem;
   backdrop-filter: blur(6px);
-  z-index: 20;
+  z-index: 1000;
 }
 
 .image-canvas-inner {
@@ -864,7 +902,15 @@ body:has(.annotation-screen.theme-light),
   flex-direction: column;
   justify-content: space-between;
   gap: 8px;
-  background: rgba(12, 16, 24, 0.9);
+  background-color: rgba(255, 255, 255, 0.06);
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02)
+  );
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   padding: 10px 10px;
@@ -1305,7 +1351,15 @@ body:has(.annotation-screen.theme-light),
 .right-panel {
   width: 320px;
   max-width: 320px;
-  background: rgba(12, 16, 24, 0.9);
+  background-color: rgba(255, 255, 255, 0.06);
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02)
+  );
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   color: rgba(237, 242, 247, 0.95);
   overflow-y: auto;
@@ -1485,6 +1539,14 @@ body:has(.annotation-screen.theme-light),
   margin-top: 10px;
   margin-bottom: 8px;
   padding-top: 10px;
+}
+
+.create-patches-section {
+  background: rgba(20, 30, 50, 0.4);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
 }
 
 .preview-box {
@@ -2062,7 +2124,8 @@ body:has(.annotation-screen.theme-light),
 .settings-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2072,8 +2135,17 @@ body:has(.annotation-screen.theme-light),
 .bottom-status-bar {
   height: 32px;
   flex-shrink: 0;
-  background: rgba(12, 16, 24, 0.95);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.04)
+  ) !important;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.25) !important;
 
   display: flex;
   justify-content: space-between;
@@ -2163,13 +2235,17 @@ body:has(.annotation-screen.theme-light),
 .settings-modal-card {
   width: min(90vw, 520px);
   max-height: 90vh;
-  background: #0f172a;
-  border: 1px solid #374151;
+  background: linear-gradient(
+    155deg,
+    rgba(8, 11, 17, 0.98),
+    rgba(10, 14, 24, 0.98)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
 }
 
 .settings-modal-header {
@@ -2408,15 +2484,50 @@ body:has(.annotation-screen.theme-light),
   ) !important;
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 8px 32px rgba(0, 0, 0, 0.25) !important;
-  border-radius: 16px;
+  border-bottom: 0 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  border-radius: 0;
   position: sticky;
   top: 0;
   z-index: 100;
   padding: 10px 16px;
   height: auto;
   min-height: 56px;
+}
+
+/* Connected glass frame: top, sidebars, and bottom share one surface */
+.top-toolbar,
+.sidebar,
+.right-panel,
+.bottom-status-bar {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.04)
+  ) !important;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  margin: 0;
+}
+
+.sidebar,
+.right-panel {
+  border-top: 0;
+}
+
+.bottom-status-bar {
+  border-top: 0 !important;
+}
+
+/* Unified glass style for all right sidebar containers */
+.right-panel .right-panel-section,
+.right-panel .preview-box,
+.right-panel .export-options {
+  background: rgba(20, 30, 50, 0.35);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
 }

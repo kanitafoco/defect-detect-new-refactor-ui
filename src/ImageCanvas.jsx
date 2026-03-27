@@ -156,7 +156,7 @@ function ImageCanvas({
   const [selectedBox, setSelectedBox] = useState(null);
 
   useEffect(() => {
-    const next = Math.max(0.5, Math.min(3, zoom / 100));
+    const next = Math.max(0.25, Math.min(3, zoom / 100));
     setBoardScale(next);
   }, [zoom]);
 
@@ -301,16 +301,12 @@ function ImageCanvas({
         backgroundSize: "20px 20px",
       }}
     >
-      {!source ? (
-        <div className="workspace-empty">No image loaded</div>
-      ) : (
-        <>
-          <div className="image-info">
-            {naturalSize.width} x {naturalSize.height} px ·
-            {Math.round(boardScale * 100)}%
-          </div>
+      <div className="canvas-wrapper">
+        {!source ? (
+          <div className="workspace-empty">No image loaded</div>
+        ) : (
           <PanZoomBoard
-            minZoom={0.5}
+            minZoom={0.25}
             maxZoom={3}
             scale={boardScale}
             onScaleChange={(nextScale) => {
@@ -353,8 +349,13 @@ function ImageCanvas({
               />
             </div>
           </PanZoomBoard>
-        </>
-      )}
+        )}
+
+        <div className="image-info-overlay">
+          {naturalSize?.width || 0} x {naturalSize?.height || 0} px ·{" "}
+          {Math.round((boardScale || 0) * 100)}%
+        </div>
+      </div>
     </div>
   );
 }
